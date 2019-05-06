@@ -4,12 +4,29 @@ import "./Running.sol";
 contract Splitter is Running
 {
     mapping(address => uint256) accounts;
+    address[] public accountList;
     event LogShare(address indexed sender, address indexed firstAccount, address indexed secondAccount, uint256 originalAmount);
     event LogWithdrawn(address indexed sender, uint256 amount);
 
     constructor() public
     {
         setRunning(true);
+    }
+    
+    function getBalanceForAccount(address account)
+        public
+        view
+        returns(uint256 balance)
+    {
+        return accounts[account];
+    }
+
+    function getNumberOfAccounts()
+        public
+        view
+        returns(uint256)
+    {
+        return accountList.length;
     }
 
     function share(address firstAccount, address secondAccount)
@@ -30,6 +47,10 @@ contract Splitter is Running
         accounts[firstAccount] += sharedAmount;
         accounts[secondAccount] += sharedAmount;
 
+        accountList.push(firstAccount);
+        accountList.push(secondAccount);
+        accountList.push(msg.sender);
+        
         emit LogShare(msg.sender, firstAccount, secondAccount, originalAmount);
         return true;
     }
@@ -42,7 +63,7 @@ contract Splitter is Running
         uint256 accountBalance = accounts[msg.sender];
         require(accountBalance > 0, "Nothing to withdraw");
         accounts[msg.sender] = 0;
-        
+
         msg.sender.transfer(accountBalance);
 
         emit LogWithdrawn(msg.sender, accountBalance);
