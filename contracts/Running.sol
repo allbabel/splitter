@@ -3,7 +3,7 @@ import "./Owned.sol";
 
 contract Running is Owned
 {
-    bool running;
+    bool public running;
 
     event LogRunningChanged(bool oldRunning, bool newRunning);
 
