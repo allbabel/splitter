@@ -3,30 +3,48 @@ import "./Running.sol";
 
 contract Splitter is Running
 {
-    mapping(address => uint256) accounts;
-    address[] public accountList;
+    mapping(address => uint) accounts;
+    mapping(address => bool) validAccounts;
+    address[] accountList;
+
     event LogShare(address indexed sender, address indexed firstAccount, address indexed secondAccount, uint256 originalAmount);
     event LogWithdrawn(address indexed sender, uint256 amount);
 
-    constructor() public
+    constructor()
+        public
     {
         setRunning(true);
     }
-    
+
+    function addAccount(address addr, uint balance)
+        private
+    {
+        require(addr != address(0x0), 'need valid address');
+        require(balance >= 0, 'balance has to be greater than zero');
+
+        if (!validAccounts[addr])
+        {
+            accountList.push(addr);
+            validAccounts[addr] = true;
+        }
+
+        accounts[addr] += balance;
+    }
+
+    function getNumberOfAccounts()
+        public
+        view
+        returns(uint)
+    {
+        return accountList.length;
+    }
+
     function getBalanceForAccount(address account)
         public
         view
         returns(uint256 balance)
     {
         return accounts[account];
-    }
-
-    function getNumberOfAccounts()
-        public
-        view
-        returns(uint256)
-    {
-        return accountList.length;
     }
 
     function share(address firstAccount, address secondAccount)
@@ -44,13 +62,9 @@ contract Splitter is Running
         uint256 originalAmount = msg.value;
         uint256 sharedAmount = originalAmount / 2;
 
-        accounts[firstAccount] += sharedAmount;
-        accounts[secondAccount] += sharedAmount;
+        addAccount(firstAccount, sharedAmount);
+        addAccount(secondAccount, sharedAmount);
 
-        accountList.push(firstAccount);
-        accountList.push(secondAccount);
-        accountList.push(msg.sender);
-        
         emit LogShare(msg.sender, firstAccount, secondAccount, originalAmount);
         return true;
     }
