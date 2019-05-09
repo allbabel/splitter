@@ -1,0 +1,27 @@
+{
+  "name": "splitter",
+  "version": "1.0.0",
+  "description": "You will create a smart contract named Splitter whereby:",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allbabel/splitter.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/allbabel/splitter/issues"
+  },
+  "homepage": "https://github.com/allbabel/splitter#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "truffle-assertions": "^0.8.2"
+  }
+}
