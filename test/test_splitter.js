@@ -1,22 +1,22 @@
 const truffleAssert = require('truffle-assertions');
 const SplitterContract = artifacts.require("./Splitter.sol");
 
-contract('Splitter', accounts => {
+contract('Splitter', function(accounts) {
 
     const[ownerAccount, firstAccount, secondAccount] = accounts;
     const amountToShare = web3.utils.toBN(web3.utils.toWei('0.1', 'ether'));
     let instance;
         
-    beforeEach('initialise contract', async () => {
+    beforeEach('initialise contract', async function() {
         instance = await SplitterContract.new({from: ownerAccount});
     });
 
-    it('Running by default is true', async () => {
+    it('Running by default is true', async function() {
 
         assert.isTrue(await instance.getRunning());
     });
 
-    it('share 1 ether between 2 other users', async () => {
+    it('share 1 ether between 2 other users', async function() {
         
         const txObj = await instance.share( firstAccount, 
                                             secondAccount, 
@@ -43,7 +43,7 @@ contract('Splitter', accounts => {
         
     });
 
-    it('withdraw balance for first account', async () => {
+    it('withdraw balance for first account', async function() {
         
         var txObj = await instance.share( firstAccount, 
                                             secondAccount, 
@@ -69,7 +69,7 @@ contract('Splitter', accounts => {
                             'New balance is not correct');
     });
 
-    it('account balances should increase on each share', async () => {
+    it('account balances should increase on each share', async function() {
         
         var txObj_1 = await instance.share( firstAccount, 
                                             secondAccount, 

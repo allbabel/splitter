@@ -6,19 +6,19 @@ contract('Owned', accounts => {
     const[ownerAccount, firstAccount, secondAccount] = accounts;
     let instance;
     
-    beforeEach('initialise contract', async () => {
+    beforeEach('initialise contract', async function() {
 
         instance = await OwnedContract.new({from: ownerAccount});
     });
 
-    it('contract should have an owner', async () => {
+    it('contract should have an owner', async function() {
 
         const address = await instance.getOwner.call();
 
         assert.strictEqual(address, ownerAccount);
     });
 
-    it('the owner should be able to change the owner', async () => {
+    it('the owner should be able to change the owner', async function() {
         
         const txObj = await instance.changeOwner(firstAccount, {from: ownerAccount});
         
@@ -30,7 +30,7 @@ contract('Owned', accounts => {
         assert.strictEqual(address, firstAccount);
     });
 
-    it('only the owner can change the owner', async () => {
+    it('only the owner can change the owner', async function() {
 
         await truffleAssert.reverts(
             instance.changeOwner(firstAccount, {from: secondAccount}),
