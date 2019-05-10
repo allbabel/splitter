@@ -3,31 +3,37 @@ const OwnedContract = artifacts.require("./Owned.sol");
 
 contract('Owned', accounts => {
 
-    const ownerAccount = accounts[0];
-    const firstAccount = accounts[1];
-    const secondAccount = accounts[2];
-    let contract;
+    const[ownerAccount, firstAccount, secondAccount] = accounts;
+    let instance;
     
+    beforeEach('initialise contract', async () => {
+
+        instance = await OwnedContract.new({from: ownerAccount});
+    });
+
     it('contract should have an owner', async () => {
 
-        contract = await OwnedContract.deployed();
-        const address = contract.owner.call({from: ownerAccount});
+        const address = await instance.getOwner.call();
 
-        assert.notEmpty(address, 'Owner address is not valid');
+        assert.strictEqual(address, ownerAccount);
     });
 
     it('the owner should be able to change the owner', async () => {
         
-        const txObj = await contract.changeOwner(firstAccount, {from: ownerAccount});
+        const txObj = await instance.changeOwner(firstAccount, {from: ownerAccount});
         
         assert.strictEqual(txObj.logs.length, 1, 'We should have an event');
         assert.strictEqual(txObj.logs[0].event, 'LogOwnerChanged');
+
+        const address = await instance.getOwner.call();
+
+        assert.strictEqual(address, firstAccount);
     });
 
     it('only the owner can change the owner', async () => {
 
         await truffleAssert.reverts(
-            contract.changeOwner(firstAccount, {from: secondAccount}),
+            instance.changeOwner(firstAccount, {from: secondAccount}),
             'Owner permission required'
         );
 

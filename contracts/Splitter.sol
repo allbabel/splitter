@@ -4,9 +4,6 @@ import "./Running.sol";
 contract Splitter is Running
 {
     mapping(address => uint) accounts;
-    mapping(address => bool) validAccounts;
-    address[] accountList;
-
     event LogShare(address indexed sender, address indexed firstAccount, address indexed secondAccount, uint256 originalAmount);
     event LogWithdrawn(address indexed sender, uint256 amount);
 
@@ -14,29 +11,6 @@ contract Splitter is Running
         public
     {
         setRunning(true);
-    }
-
-    function addAccount(address addr, uint balance)
-        private
-    {
-        require(addr != address(0x0), 'need valid address');
-        require(balance >= 0, 'balance has to be greater than zero');
-
-        if (!validAccounts[addr])
-        {
-            accountList.push(addr);
-            validAccounts[addr] = true;
-        }
-
-        accounts[addr] += balance;
-    }
-
-    function getNumberOfAccounts()
-        public
-        view
-        returns(uint)
-    {
-        return accountList.length;
     }
 
     function getBalanceForAccount(address account)
@@ -59,13 +33,12 @@ contract Splitter is Running
         require(secondAccount != address(0), "Second account is invalid");
         require((firstAccount != msg.sender) || (secondAccount != msg.sender), "You cannot share to yourself");
 
-        uint256 originalAmount = msg.value;
-        uint256 sharedAmount = originalAmount / 2;
+        uint256 sharedAmount = msg.value / 2;
 
-        addAccount(firstAccount, sharedAmount);
-        addAccount(secondAccount, sharedAmount);
+        accounts[firstAccount] += sharedAmount;
+        accounts[secondAccount] += sharedAmount;
 
-        emit LogShare(msg.sender, firstAccount, secondAccount, originalAmount);
+        emit LogShare(msg.sender, firstAccount, secondAccount, msg.value);
         return true;
     }
 
@@ -78,9 +51,10 @@ contract Splitter is Running
         require(accountBalance > 0, "Nothing to withdraw");
         accounts[msg.sender] = 0;
 
+        emit LogWithdrawn(msg.sender, accountBalance);
+        
         msg.sender.transfer(accountBalance);
 
-        emit LogWithdrawn(msg.sender, accountBalance);
         return true;
     }
 }
