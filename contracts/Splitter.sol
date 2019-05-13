@@ -1,16 +1,18 @@
 pragma solidity 0.5.0;
 import "./Running.sol";
+import "./SafeMath.sol";
 
 contract Splitter is Running
 {
     mapping(address => uint) accounts;
     event LogShare(address indexed sender, address indexed firstAccount, address indexed secondAccount, uint256 originalAmount);
     event LogWithdrawn(address indexed sender, uint256 amount);
+    using SafeMath for uint256;
 
-    constructor()
+    constructor(bool running)
         public
     {
-        setRunning(true);
+        setRunning(running);
     }
 
     function getBalanceForAccount(address account)
@@ -33,10 +35,10 @@ contract Splitter is Running
         require(secondAccount != address(0), "Second account is invalid");
         require((firstAccount != msg.sender) || (secondAccount != msg.sender), "You cannot share to yourself");
 
-        uint256 sharedAmount = msg.value / 2;
+        uint256 sharedAmount = msg.value.div(2);
 
-        accounts[firstAccount] += sharedAmount;
-        accounts[secondAccount] += sharedAmount;
+        accounts[firstAccount] = accounts[firstAccount].add(sharedAmount);
+        accounts[secondAccount] = accounts[secondAccount].add(sharedAmount);
 
         emit LogShare(msg.sender, firstAccount, secondAccount, msg.value);
         return true;
@@ -52,7 +54,7 @@ contract Splitter is Running
         accounts[msg.sender] = 0;
 
         emit LogWithdrawn(msg.sender, accountBalance);
-        
+
         msg.sender.transfer(accountBalance);
 
         return true;

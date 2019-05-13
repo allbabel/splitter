@@ -4,7 +4,7 @@ const SplitterContract = artifacts.require("./Splitter.sol");
 contract('Splitter', function(accounts) {
 
     const[ownerAccount, firstAccount, secondAccount] = accounts;
-    const amountToShare = web3.utils.toBN(web3.utils.toWei('0.1', 'ether'));
+    const amountToShare = web3.utils.toBN(web3.utils.toWei('0.1', 'Ether'));
     let instance;
         
     beforeEach('initialise contract', async function() {
@@ -24,7 +24,10 @@ contract('Splitter', function(accounts) {
 
         assert.strictEqual(txObj.logs.length, 1, 'We should have an event');
         assert.strictEqual(txObj.logs[0].event, 'LogShare');
-    
+        assert.strictEqual(txObj.logs[0].args.firstAccount, firstAccount);
+        assert.strictEqual(txObj.logs[0].args.secondAccount, secondAccount);
+        assert.strictEqual(txObj.logs[0].args.originalAmount.toString(), amountToShare.toString());
+        
         // We should see the contract with a balance of 1 ether
 
         assert.strictEqual( await web3.eth.getBalance(instance.address), 
@@ -51,6 +54,9 @@ contract('Splitter', function(accounts) {
 
         assert.strictEqual(txObj.logs.length, 1, 'We should have an event');
         assert.strictEqual(txObj.logs[0].event, 'LogShare');
+        assert.strictEqual(txObj.logs[0].args.firstAccount, firstAccount);
+        assert.strictEqual(txObj.logs[0].args.secondAccount, secondAccount);
+        assert.strictEqual(txObj.logs[0].args.originalAmount.toString(), amountToShare.toString());
 
         const originalBalance = web3.utils.toBN(await web3.eth.getBalance(firstAccount));
         const amount = await instance.getBalanceForAccount.call(firstAccount);
@@ -58,6 +64,7 @@ contract('Splitter', function(accounts) {
 
         assert.strictEqual(txObj.logs.length, 1, 'We should have an event');
         assert.strictEqual(txObj.logs[0].event, 'LogWithdrawn');
+        assert.strictEqual(txObj.logs[0].args.amount.toString(), amount.toString());
         
         var tx = await web3.eth.getTransaction(txObj.receipt.transactionHash);
         var txFee = web3.utils.toBN(tx.gasPrice * txObj.receipt.gasUsed);
@@ -71,9 +78,9 @@ contract('Splitter', function(accounts) {
 
     it('account balances should increase on each share', async function() {
         
-        var txObj_1 = await instance.share( firstAccount, 
-                                            secondAccount, 
-                                            {from: ownerAccount, value: amountToShare});
+        const txObj_1 = await instance.share(   firstAccount, 
+                                                secondAccount, 
+                                                {from: ownerAccount, value: amountToShare});
 
         assert.strictEqual(txObj_1.logs.length, 1, 'We should have an event');
         assert.strictEqual(txObj_1.logs[0].event, 'LogShare');

@@ -1,7 +1,7 @@
 const truffleAssert = require('truffle-assertions');
 const OwnedContract = artifacts.require("./Owned.sol");
 
-contract('Owned', accounts => {
+contract('Owned', function(accounts) {
 
     const[ownerAccount, firstAccount, secondAccount] = accounts;
     let instance;
