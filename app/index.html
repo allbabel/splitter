@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<title>Splitter</title>
+<meta charset="utf-8">
+
+
+
+
+</head>
+<body>
+
+    <h1>Splitter Contract:<span id='contract_balance'>Zero</span> Ether</h1>
+    <h2>Status:<span id='status'>None</span></h2>
+    <h3>Account balances:<span id='account_balances'></span></h3>
+    <hr/>
+    <h3>Split funds:</h3>
+    <div>First Account:<input name='firstAccount' type='text' placeholder='0x0011223344556677889900112233445566778899'/></div>
+    <div>Second Account:<input name='secondAccount' type='text' placeholder='0x0011223344556677889900112233445566778899'/></div>
+    <div>Amount (Ether):<input name='amountToShare' type='number' placeholder='0'/></div>
+    <div><button id='send'>Send Ether</button></div>
+    <hr/>
+    
+    <h3>Withdraw funds:</h3>
+    <div><button id='withdraw'>Withdraw Ether</button></div>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>
