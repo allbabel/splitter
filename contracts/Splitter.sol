@@ -21,12 +21,16 @@ contract Splitter is Running
         isRunning
         returns(bool success)
     {
-        require(msg.value > 0, "Value is invalid");
+        require(msg.value > 1, "Value is invalid");
         require(firstAccount != address(0), "First account is invalid");
         require(secondAccount != address(0), "Second account is invalid");
         require((firstAccount != msg.sender) && (secondAccount != msg.sender), "You cannot share to yourself");
 
-        // If the number is odd, the contract will keep the 1 Wei :-)
+        // If the Wei is odd we send back 1 Wei to sender
+        if (msg.value % 2 != 0)
+        {
+            msg.sender.transfer(1);
+        }
         uint256 sharedAmount = msg.value.div(2);
 
         accounts[firstAccount] = accounts[firstAccount].add(sharedAmount);

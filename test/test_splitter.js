@@ -8,7 +8,7 @@ contract('Splitter', function(accounts) {
     let instance;
         
     beforeEach('initialise contract', async function() {
-        instance = await SplitterContract.new({from: ownerAccount});
+        instance = await SplitterContract.new(true, {from: ownerAccount});
     });
 
     it('Running by default is true', async function() {
@@ -43,6 +43,36 @@ contract('Splitter', function(accounts) {
         assert.strictEqual( (await instance.accounts.call(secondAccount, {from:ownerAccount})).toString(10), 
                             (amountToShare / 2).toString(10), 
                             'Amount shared needs to be half for second account');
+        
+    });
+
+    it('should return 1 Wei if payment is odd', async function() {
+        
+        const orginalBalance = await web3.eth.getBalance(ownerAccount);
+        const oddAmount = web3.utils.toBN('999');
+
+        const txObj = await instance.share( firstAccount, 
+                                            secondAccount, 
+                                            {from:ownerAccount, value:oddAmount.toString(10)});
+
+        assert.strictEqual(txObj.logs.length, 1, 'We should have an event');
+        assert.strictEqual(txObj.logs[0].event, 'LogShare');
+        assert.strictEqual(txObj.logs[0].args.firstAccount, firstAccount);
+        assert.strictEqual(txObj.logs[0].args.secondAccount, secondAccount);
+        assert.strictEqual(txObj.logs[0].args.originalAmount.toString(10), oddAmount.toString(10));
+        
+        // We should see the contract with a balance of oddAmount - 1 Wei
+        assert.strictEqual( await web3.eth.getBalance(instance.address), 
+                            (oddAmount - web3.utils.toBN('1')).toString(10), 
+                            'Amount in contract needs to be that shared');
+        
+        assert.strictEqual( (await instance.accounts.call(firstAccount, {from:ownerAccount})).toString(10), 
+                            ((oddAmount - web3.utils.toBN('1')) / 2).toString(10), 
+                            'Amount needs to be 1 Wei');
+        
+        assert.strictEqual( (await instance.accounts.call(secondAccount, {from:ownerAccount})).toString(10), 
+                            ((oddAmount - web3.utils.toBN('1')) / 2).toString(10), 
+                            'Amount needs to be 1 Wei');
         
     });
 

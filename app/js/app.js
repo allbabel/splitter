@@ -92,7 +92,10 @@ const withdrawDeposit = function() {
         .then(function(success) {
             if (!success)
                 throw new Error('The transaction will fail, not sending'); 
-            return deployed.withdraw({from: window.account, gas: gas});
+            return deployed.withdraw({from: window.account, gas: gas})
+                .on('transactionHash', 
+                    txHash => $('#status').html('Transaction en route ', txHash)
+                );
         })
         .then(function(txObj) {
             const receipt = txObj.receipt;
