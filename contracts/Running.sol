@@ -22,7 +22,18 @@ contract Running is Owned
         return running;
     }
 
-    function setRunning(bool newRunning) public isOwner
+    function pause() public isOwner
+    {
+        setRunning(false);
+    }
+
+    function resume() public isOwner
+    {
+        setRunning(true);
+    }
+
+    function setRunning(bool newRunning) private
+        isOwner
     {
         emit LogRunningChanged(running, newRunning);
         running = newRunning;
