@@ -13,8 +13,9 @@ contract Running is Owned
         _;
     }
 
-    constructor() public
+    constructor(bool _running) public
     {
+        running = _running;
     }
 
     function getRunning() public view returns(bool)
