@@ -22,11 +22,11 @@ contract Splitter is Running
         returns(bool success)
     {
         require(msg.value > 0, "Value is invalid");
-        require(msg.value % 2 == 0, "Value needs to be divisable by two");
         require(firstAccount != address(0), "First account is invalid");
         require(secondAccount != address(0), "Second account is invalid");
-        require((firstAccount != msg.sender) || (secondAccount != msg.sender), "You cannot share to yourself");
+        require((firstAccount != msg.sender) && (secondAccount != msg.sender), "You cannot share to yourself");
 
+        // If the number is odd, the contract will keep the 1 Wei :-)
         uint256 sharedAmount = msg.value.div(2);
 
         accounts[firstAccount] = accounts[firstAccount].add(sharedAmount);

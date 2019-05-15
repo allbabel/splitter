@@ -33,7 +33,8 @@ contract Running is Owned
         setRunning(true);
     }
 
-    function setRunning(bool newRunning) private
+    function setRunning(bool newRunning)
+        private
         isOwner
     {
         emit LogRunningChanged(running, newRunning);
