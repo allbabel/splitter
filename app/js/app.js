@@ -77,7 +77,8 @@ const updateStatus = function() {
             });
 
             contractAccounts.forEach(displayAccountBalance);
-        });  
+        })
+        .catch(console.error);  
 };
 
 const withdrawDeposit = function() {
@@ -104,7 +105,8 @@ const withdrawDeposit = function() {
 
                 updateStatus();
             }
-        });
+        })
+        .catch(console.error);
 };
 
 const sendShare = function() {
@@ -155,7 +157,8 @@ const sendShare = function() {
 
                 updateStatus();
             }
-        });
+        })
+        .catch(console.error);;
 };
 require("file-loader?name=../index.html!../index.html");
 // Balance of contract UI element
