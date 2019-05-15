@@ -10,9 +10,9 @@ contract Splitter is Running
     using SafeMath for uint256;
 
     constructor(bool running)
+        Running(running)
         public
     {
-        setRunning(running);
     }
 
     function getBalanceForAccount(address account)
