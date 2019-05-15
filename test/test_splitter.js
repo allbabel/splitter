@@ -61,10 +61,9 @@ contract('Splitter', function(accounts) {
         assert.strictEqual(txObj.logs[0].args.secondAccount, secondAccount);
         assert.strictEqual(txObj.logs[0].args.originalAmount.toString(10), oddAmount.toString(10));
         
-        // We should see the contract with a balance of oddAmount - 1 Wei
-        assert.strictEqual( await web3.eth.getBalance(instance.address), 
-                            (oddAmount - web3.utils.toBN('1')).toString(10), 
-                            'Amount in contract needs to be that shared');
+        assert.strictEqual( (await instance.accounts.call(ownerAccount, {from:ownerAccount})).toString(10), 
+                            web3.utils.toBN('1').toString(10), 
+                            'Amount needs to be 1 Wei');
         
         assert.strictEqual( (await instance.accounts.call(firstAccount, {from:ownerAccount})).toString(10), 
                             ((oddAmount - web3.utils.toBN('1')) / 2).toString(10), 

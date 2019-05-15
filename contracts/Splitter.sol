@@ -29,8 +29,9 @@ contract Splitter is Running
         // If the Wei is odd we send back 1 Wei to sender
         if (msg.value % 2 != 0)
         {
-            msg.sender.transfer(1);
+            accounts[msg.sender] = accounts[msg.sender].add(1);
         }
+        
         uint256 sharedAmount = msg.value.div(2);
 
         accounts[firstAccount] = accounts[firstAccount].add(sharedAmount);
