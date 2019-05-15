@@ -4,7 +4,7 @@ import "./SafeMath.sol";
 
 contract Splitter is Running
 {
-    mapping(address => uint) accounts;
+    mapping(address => uint) public accounts;
     event LogShare(address indexed sender, address indexed firstAccount, address indexed secondAccount, uint256 originalAmount);
     event LogWithdrawn(address indexed sender, uint256 amount);
     using SafeMath for uint256;
@@ -13,14 +13,6 @@ contract Splitter is Running
         public
     {
         setRunning(running);
-    }
-
-    function getBalanceForAccount(address account)
-        public
-        view
-        returns(uint256 balance)
-    {
-        return accounts[account];
     }
 
     function share(address firstAccount, address secondAccount)
