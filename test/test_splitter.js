@@ -36,11 +36,11 @@ contract('Splitter', function(accounts) {
         
         // We should see firstAccount and SecondAccount with 1/2 ether
         
-        assert.strictEqual( (await instance.getBalanceForAccount(firstAccount)).toString(10), 
+        assert.strictEqual( (await instance.accounts.call(firstAccount, {from:ownerAccount})).toString(10), 
                             (amountToShare / 2).toString(10), 
                             'Amount shared needs to be half for first account');
         
-        assert.strictEqual( (await instance.getBalanceForAccount(secondAccount)).toString(10), 
+        assert.strictEqual( (await instance.accounts.call(secondAccount, {from:ownerAccount})).toString(10), 
                             (amountToShare / 2).toString(10), 
                             'Amount shared needs to be half for second account');
         
@@ -59,7 +59,7 @@ contract('Splitter', function(accounts) {
         assert.strictEqual(txObj.logs[0].args.originalAmount.toString(), amountToShare.toString());
 
         const originalBalance = web3.utils.toBN(await web3.eth.getBalance(firstAccount));
-        const amount = await instance.getBalanceForAccount.call(firstAccount);
+        const amount = await instance.accounts.call(firstAccount, {from:ownerAccount});
         txObj = await instance.withdraw({from: firstAccount});
 
         assert.strictEqual(txObj.logs.length, 1, 'We should have an event');
@@ -85,15 +85,15 @@ contract('Splitter', function(accounts) {
         assert.strictEqual(txObj_1.logs.length, 1, 'We should have an event');
         assert.strictEqual(txObj_1.logs[0].event, 'LogShare');
 
-        var balanceFirstAccount_1 = await instance.getBalanceForAccount(firstAccount);
-        var balanceSecondAccount_1 = await instance.getBalanceForAccount(secondAccount);
+        var balanceFirstAccount_1 = await instance.accounts.call(firstAccount, {from:ownerAccount});
+        var balanceSecondAccount_1 = await instance.accounts.call(secondAccount, {from:ownerAccount});
 
         var txObj_2 = await instance.share( firstAccount, 
                                             secondAccount, 
                                             {from: ownerAccount, value: amountToShare});
         
-        var balanceFirstAccount_2 = await instance.getBalanceForAccount(firstAccount);
-        var balanceSecondAccount_2 = await instance.getBalanceForAccount(secondAccount);
+        var balanceFirstAccount_2 = await instance.accounts.call(firstAccount, {from:ownerAccount});
+        var balanceSecondAccount_2 = await instance.accounts.call(secondAccount, {from:ownerAccount});
         
         assert.strictEqual(txObj_2.logs.length, 1, 'We should have an event');
         assert.strictEqual(txObj_2.logs[0].event, 'LogShare');

@@ -49,7 +49,7 @@ const decipherLogShare = function(log) {
 };
 
 const displayAccountBalance = function(address) {
-    deployed.getBalanceForAccount(address).then(function(balance) {
+    deployed.accounts.call(address).then(function(balance) {
         $('#account_balances').append('<br/>' + address + ': ' + web3.utils.fromWei(balance) + ' Ether');
     });
 };
@@ -77,7 +77,8 @@ const updateStatus = function() {
             });
 
             contractAccounts.forEach(displayAccountBalance);
-        });  
+        })
+        .catch(console.error);  
 };
 
 const withdrawDeposit = function() {
@@ -104,7 +105,8 @@ const withdrawDeposit = function() {
 
                 updateStatus();
             }
-        });
+        })
+        .catch(console.error);
 };
 
 const sendShare = function() {
@@ -116,11 +118,6 @@ const sendShare = function() {
     if (deployed === null) {
         return;        
     }
-
-    if (amountToShare % 2 != 0) {
-        $('#status').html('Value needs to be divisible by 2');
-        return;
-    } 
 
     if (firstAccount.length != 42 || secondAccount.length != 42) {
         $('#status').html('Please provide valid accounts');
@@ -160,7 +157,8 @@ const sendShare = function() {
 
                 updateStatus();
             }
-        });
+        })
+        .catch(console.error);;
 };
 require("file-loader?name=../index.html!../index.html");
 // Balance of contract UI element

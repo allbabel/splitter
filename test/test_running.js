@@ -18,7 +18,7 @@ contract('Running', function(accounts) {
 
     it('the owner should be able to change running', async function() {
         
-        const txObj = await instance.setRunning(false, {from: ownerAccount});
+        const txObj = await instance.pause({from: ownerAccount});
         
         assert.isFalse(await instance.getRunning.call());
         assert.strictEqual(txObj.logs.length, 1, 'We should have an event');
@@ -28,7 +28,7 @@ contract('Running', function(accounts) {
     it('only the owner can change the running state', async function() {
 
         await truffleAssert.reverts(
-            instance.setRunning(true, {from: firstAccount}),
+            instance.resume({from: firstAccount}),
             'Owner permission required'
         );
 
