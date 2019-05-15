@@ -38,4 +38,11 @@ contract Running is Owned
         emit LogRunningChanged(running, newRunning);
         running = newRunning;
     }
+
+    function kill()
+        public
+        isOwner
+    {
+        selfdestruct(msg.sender);
+    }
 }
