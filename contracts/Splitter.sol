@@ -18,7 +18,7 @@ contract Splitter is Running
     function share(address firstAccount, address secondAccount)
         public
         payable
-        isRunning
+        whenRunning
         returns(bool success)
     {
         require(msg.value > 1, "Value is invalid");
@@ -27,11 +27,12 @@ contract Splitter is Running
         require((firstAccount != msg.sender) && (secondAccount != msg.sender), "You cannot share to yourself");
 
         // If the Wei is odd we send back 1 Wei to sender
-        if (msg.value % 2 != 0)
+        uint remainder = msg.value % 2;
+        if (remainder > 0)
         {
-            accounts[msg.sender] = accounts[msg.sender].add(1);
+            accounts[msg.sender] = accounts[msg.sender].add(remainder);
         }
-        
+
         uint256 sharedAmount = msg.value.div(2);
 
         accounts[firstAccount] = accounts[firstAccount].add(sharedAmount);
@@ -43,7 +44,7 @@ contract Splitter is Running
 
     function withdraw()
         public
-        isRunning
+        whenRunning
         returns(bool success)
     {
         uint256 accountBalance = accounts[msg.sender];

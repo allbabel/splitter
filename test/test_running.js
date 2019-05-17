@@ -28,7 +28,7 @@ contract('Running', function(accounts) {
     it('only the owner can change the running state', async function() {
 
         await truffleAssert.reverts(
-            instance.resume({from: firstAccount}),
+            instance.pause({from: firstAccount}),
             'Owner permission required'
         );
 

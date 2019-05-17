@@ -35,7 +35,7 @@ window.addEventListener('load', function() {
 
             deployed = _deployed;
 
-            updateStatus();
+            return updateStatus();
         })
         .then(function() {
             $('#send').click(sendShare);
@@ -49,9 +49,10 @@ const decipherLogShare = function(log) {
 };
 
 const displayAccountBalance = function(address) {
-    deployed.accounts.call(address).then(function(balance) {
+    deployed.accounts.call(address)
+    .then(function(balance) {
         $('#account_balances').append('<br/>' + address + ': ' + web3.utils.fromWei(balance) + ' Ether');
-    });
+    }).catch(console.error);
 };
 
 const updateStatus = function() {
